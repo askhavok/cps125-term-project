@@ -1,11 +1,24 @@
 #include <stdio.h>
 
-void sort(double x[], char order, char y[]){
-    double temp1,temp2;
-    int n=6;
-    for (int i = 0; i < n; ++i) {
+//VARIABLE DECLARATIONS
+FILE *laketemps;
+double sum[6] = {0, 0, 0, 0, 0, 0};
+double avgtemp[6] = {0, 0, 0, 0, 0, 0};
+double totalavgtemp = 0;
+//maxtemps-> row 0 for temp, row 1 for the lake it is, row 2 for the day it is.
+double maxavg, minavg, maxwarmtemp[3][1], maxcoldtemp[3][1];
+double warmestday[2][6], coldestday[2][6]= { {0,0,0,0,0,0}, { 10000, 10000, 10000, 10000, 10000, 10000}};
+int initialspot[] = { 0,1,2,3,4,5 };
+char* initials[] = {"Superior", "Michigan", "Huron", "Erie", "Ontario", "St. Claire"};
+double data[8][365];
 
-        for (int j = i + 1; j < n; ++j) {
+void sort(double x[], char order, int y[]){
+    double temp1;
+    int temp2;
+    int n=6;
+    for (int i = 0; i < n; i++) {
+
+        for (int j = i + 1; j < n; j++) {
 
             if (order == 'd') {
                 if (x[i] < x[j]) {
@@ -34,25 +47,12 @@ void sort(double x[], char order, char y[]){
         }
     }
     for(int z=0;z<n;z++){
-        printf("%lf at %c ",x[z], y[z]);
+        int j = y[z];
+        printf("%.2lf at %s, ",x[z], initials[j]);
     }
 }
 
-
-
 int main() {
-
-    //VARIABLE DECLARATION
-    FILE *laketemps;
-    char *p[6];
-    double sum[6] = {0, 0, 0, 0, 0, 0};
-    double avgtemp[6] = {0, 0, 0, 0, 0, 0};
-    double totalavgtemp = 0;
-    //maxtemps-> row 0 for temp, row 1 for the lake it is, row 2 for the day it is.
-    double maxavg, minavg, maxwarmtemp[3][1], maxcoldtemp[3][1];
-    double warmestday[2][6], coldestday[2][6]= { {0,0,0,0,0,0}, { 10000, 10000, 10000, 10000, 10000, 10000}};
-    char initials[6] = {'S', 'M', 'H', 'E', 'O', 'C'};
-    double data[8][365];
     laketemps = fopen("C:\\Users\\erioh\\CLionProjects\\WeatherProject\\glsea-temps2019_1024.txt","r"); //fix the directory
 
     //if the file doesnt exist or isnt in the right place, exit program
@@ -102,19 +102,19 @@ int main() {
     //Find the warmest lake, and see which are above/below avg temp
     for (int i = 0; i < 6; i++) {
         if (avgtemp[i] > totalavgtemp) {
-            printf("Lake %c is above the average temperature of all the lakes \n", initials[i]);
+            printf("Lake %s is above the average temperature of all the lakes \n", initials[i]);
         } else if (avgtemp[i] < totalavgtemp) {
-            printf("Lake %c is below the average temperature of all the lakes \n", initials[i]);
+            printf("Lake %s is below the average temperature of all the lakes \n", initials[i]);
         }
 
         if(maxavg==avgtemp[i]){
-            printf("The warmest lake is %c\n", initials[i]);
+            printf("The warmest lake is lake %s\n", initials[i]);
         }
         if(minavg==avgtemp[i]){
-            printf("The coldest lake is %c\n", initials[i]);
+            printf("The coldest lake is lake %s\n", initials[i]);
         }
-        printf("Warmest temperature for lake %c: %lf on day %lf \n", initials[i], warmestday[1][i], warmestday[0][i]+1);
-        printf("Coldest temperature for lake %c: %lf on day %lf \n", initials[i], coldestday[1][i], coldestday[0][i]+1);
+        printf("Warmest temperature for lake %s: %.2lf on day %.lf \n", initials[i], warmestday[1][i], warmestday[0][i]+1);
+        printf("Coldest temperature for lake %s: %.2lf on day %.lf \n", initials[i], coldestday[1][i], coldestday[0][i]+1);
 
         if(warmestday[1][i]>maxwarmtemp[0][0]){
             maxwarmtemp[0][0] = warmestday[1][i];
@@ -126,10 +126,11 @@ int main() {
             maxcoldtemp[1][0] = i;
             maxcoldtemp[2][0] = coldestday[0][i];
         }
+        printf("\n");
     }
     int initial1 = maxwarmtemp[1][0];
-    printf("The warmest overall temperature is %lf at lake %c on day %lf\n",maxwarmtemp[0][0], initials[initial1], maxwarmtemp[2][0]+1);
-    printf("The coldest overall temperature is %lf on multiple days in multiple lakes \n",maxcoldtemp[0][0]);
+    printf("The warmest overall temperature is %.2lf at lake %s on day %.lf\n",maxwarmtemp[0][0], initials[initial1], maxwarmtemp[2][0]+1);
+    printf("The coldest overall temperature is %.2lf on multiple days in multiple lakes \n",maxcoldtemp[0][0]);
 
     double summersum[6] = {0,0,0,0,0,0};
     double summeravg[6] = {0,0,0,0,0,0};
@@ -141,8 +142,8 @@ int main() {
     for(int i=0;i<6;i++){
         summeravg[i] = summersum[i]/93;
     }
-    printf("The sorted average temperatures, in degrees, during the summer are \n");
-    sort(summeravg,'d', initials);
+    printf("The sorted average temperatures, in degrees, during the summer are ");
+    sort(summeravg,'d', initialspot);
 
 
 
