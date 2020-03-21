@@ -7,6 +7,7 @@ double avgtemp[6] = {0, 0, 0, 0, 0, 0};
 double totalavgtemp = 0;
 //maxtemps-> row 0 for temp, row 1 for the lake it is, row 2 for the day it is.
 double maxavg, minavg, maxwarmtemp[3][1], maxcoldtemp[3][1];
+int warmtoswim[6] = { 0,0,0,0,0,0 }, coldtoswim[6] = { 0,0,0,0,0,0 };
 double warmestday[2][6], coldestday[2][6]= { {0,0,0,0,0,0}, { 10000, 10000, 10000, 10000, 10000, 10000}};
 int initialspot[] = { 0,1,2,3,4,5 };
 char* initials[] = {"Superior", "Michigan", "Huron", "Erie", "Ontario", "St. Claire"};
@@ -17,31 +18,24 @@ void sort(double x[], char order, int y[]){
     int temp2;
     int n=6;
     for (int i = 0; i < n; i++) {
-
         for (int j = i + 1; j < n; j++) {
-
             if (order == 'd') {
                 if (x[i] < x[j]) {
-
                     temp1 = x[i];
                     x[i] = x[j];
                     x[j] = temp1;
                     temp2 = y[i];
                     y[i] = y[j];
                     y[j] = temp2;
-
                 }
-
             } else if(order == 'a'){
                 if (x[i] > x[j]) {
-
                     temp1 = x[i];
                     x[i] = x[j];
                     x[j] = temp1;
                     temp2 = y[i];
                     y[i] = y[j];
                     y[j] = temp2;
-
                 }
             }
         }
@@ -78,6 +72,12 @@ int main() {
             if(data[j+2][i]<coldestday[1][j]){
                 coldestday[1][j]= data[j+2][i];
                 coldestday[0][j] = i;
+            }
+            if(data[j+2][i]>20){
+                warmtoswim[j]++;
+            }
+            if(data[j+2][i]<0){
+                coldtoswim[j]++;
             }
         }
     }
@@ -126,6 +126,8 @@ int main() {
             maxcoldtemp[1][0] = i;
             maxcoldtemp[2][0] = coldestday[0][i];
         }
+        printf("For %d days, the water's warm enough to swim in this lake\n", warmtoswim[i]);
+        printf("For %d days, the water's too cold to swim in this lake\n", coldtoswim[i]);
         printf("\n");
     }
     int initial1 = maxwarmtemp[1][0];
@@ -140,12 +142,31 @@ int main() {
             }
         }
     for(int i=0;i<6;i++){
-        summeravg[i] = summersum[i]/93;
+        summeravg[i] = summersum[i]/95;
     }
-    printf("The sorted average temperatures, in degrees, during the summer are ");
+    printf("\n");
+    printf("The sorted warmest average temperatures, in degrees, during the summer are ");
     sort(summeravg,'d', initialspot);
 
+    printf("\n");
 
+    double wintersum[6] = {0,0,0,0,0,0};
+    double winteravg[6] = {0,0,0,0,0,0};
+    for(int i=0;i<79;i++){
+        for(int j=0; j<6;j++){
+            wintersum[j] += data[j+2][i];
+        }
+    }
+    for(int i=354;i<365;i++){
+        for(int j=0; j<6; j++){
+            wintersum[j] += data[j+2][i];
+        }
+    }
+    for(int i=0; i<6; i++){
+        winteravg[i] = wintersum[i]/90;
+    }
+    printf("The sorted warmest average temperatures, in degrees, during the winter are ");
+    sort(winteravg,'d',initialspot);
 
 
 
