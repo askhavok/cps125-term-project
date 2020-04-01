@@ -2,16 +2,19 @@
 
 //VARIABLE DECLARATIONS
 FILE *laketemps;
+FILE *laketemps2018;
 double sum[6] = {0, 0, 0, 0, 0, 0};
+double sum2018[6] = {0, 0, 0, 0, 0, 0};
 double avgtemp[6] = {0, 0, 0, 0, 0, 0};
+double avgtemp2018[6] = {0, 0, 0, 0, 0, 0};
 double totalavgtemp = 0;
 //maxtemps-> row 0 for temp, row 1 for the lake it is, row 2 for the day it is.
-double maxavg, minavg, maxwarmtemp[3][1], maxcoldtemp[3][1];
+double maxwarmtemp[3][1], maxcoldtemp[3][1];
 int warmtoswim[6] = { 0,0,0,0,0,0 }, coldtoswim[6] = { 0,0,0,0,0,0 };
 double warmestday[2][6], coldestday[2][6]= { {0,0,0,0,0,0}, { 10000, 10000, 10000, 10000, 10000, 10000}};
 int initialspot[] = { 0,1,2,3,4,5 };
 char* initials[] = {"Superior", "Michigan", "Huron", "Erie", "Ontario", "St. Claire"};
-double data[8][365];
+double data[8][365], data2018[8][365];
 
 void sort(double x[], char order, int y[]){
     double temp1;
@@ -48,9 +51,10 @@ void sort(double x[], char order, int y[]){
 
 int main() {
     laketemps = fopen("C:\\Users\\erioh\\CLionProjects\\WeatherProject\\glsea-temps2019_1024.txt","r"); //fix the directory
+    laketemps2018 = fopen("C:\\Users\\erioh\\CLionProjects\\WeatherProject\\glsea-temps2018_1024.txt", "r");
 
     //if the file doesnt exist or isnt in the right place, exit program
-    if (laketemps == NULL) {
+    if (laketemps == NULL || laketemps2018 == NULL) {
         printf("Cannot open file, does it exist?\n");
         return -1;
     }
@@ -59,12 +63,14 @@ int main() {
         //collect data from the file
         for (int j = 0; j < 8; j++) {
             fscanf(laketemps, "%lf", &data[j][i]);
+            fscanf(laketemps2018, "%lf", &data2018[j][i]);
         }
         //printf("%lf \n", data[1][i]);
 
         //calculate sum
         for (int j = 0; j < 6; j++) {
             sum[j] += data[j + 2][i];
+            sum2018[j] += data2018[j+2][i];
             if(data[j+2][i]>warmestday[1][j]){
                 warmestday[1][j]= data[j+2][i];
                 warmestday[0][j] = i;
@@ -85,10 +91,13 @@ int main() {
 
     //calculate avg temp and total avg temp
     for (int i = 0; i < 6; i++) {
-        maxavg = avgtemp[0];
-        minavg = avgtemp[0];
+        avgtemp2018[i] = sum2018[i] / 365;
         avgtemp[i] = sum[i] / 365;
         totalavgtemp += avgtemp[i];
+        printf("%lf  |", avgtemp[i]);
+    }
+    double maxavg=avgtemp[0], minavg=avgtemp[0];
+    for(int i=0;i<6;i++){
         if (avgtemp[i] > maxavg) {
             maxavg = avgtemp[i];
         }
@@ -100,6 +109,7 @@ int main() {
     maxwarmtemp[0][0] = warmestday[1][0];
     maxcoldtemp[0][0] =  coldestday[1][0];
     //Find the warmest lake, and see which are above/below avg temp
+    printf("The average temperature of all lakes is %.2lf\n", totalavgtemp);
     for (int i = 0; i < 6; i++) {
         if (avgtemp[i] > totalavgtemp) {
             printf("Lake %s is above the average temperature of all the lakes \n", initials[i]);
@@ -142,7 +152,7 @@ int main() {
             }
         }
     for(int i=0;i<6;i++){
-        summeravg[i] = summersum[i]/95;
+        summeravg[i] = summersum[i]/94;
     }
     printf("\n");
     printf("The sorted warmest average temperatures, in degrees, during the summer are ");
@@ -167,9 +177,11 @@ int main() {
     }
     printf("The sorted warmest average temperatures, in degrees, during the winter are ");
     sort(winteravg,'d',initialspot);
-
-
-
+    printf("\n\n");
+    printf("Average Temperatures for each lake in 2018 vs 2019\n");
+    for(int i=0;i<6;i++){
+        printf("Lake %s : %.2lf | %.2lf \n", initials[i], avgtemp2018[i], avgtemp[i]);
+    }
     return 0;
     }
 
