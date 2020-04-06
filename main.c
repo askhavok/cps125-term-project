@@ -16,7 +16,7 @@ int initialspot[] = { 0,1,2,3,4,5 };
 char* initials[] = {"Superior", "Michigan", "Huron", "Erie", "Ontario", "St. Claire"};
 double data[8][365], data2018[8][365];
 
-void getDate(int days,int year) {
+void getDate(int days) {
     int month, day;
     (1 <= days && days <= 31) ? month = 1, day = days : 1;
     (32 <= days && days <= 59) ? month = 2, day = days - 31 : 1;
@@ -30,7 +30,7 @@ void getDate(int days,int year) {
     (274 <= days && days <= 304) ? month = 10, day = days - 273 : 1;
     (301 <= days && days <= 334) ? month = 11, day = days - 304 : 1;
     (335 <= days && days <= 365) ? month = 12, day = days - 334 : 1;
-    printf("%d/%d/2019", day, month, year); //the date can be changed to 2018 as well
+    printf("%d/%d/2019\n", day, month); //the date can be changed to 2018 as well
 }
 
 void sort(double x[], char order, int y[]){
@@ -107,6 +107,7 @@ int main() {
 
 
     //calculate avg temp and total avg temp
+    printf("Average Lake Temperatures\n");
     for (int i = 0; i < 6; i++) {
         avgtemp2018[i] = sum2018[i] / 365;
         avgtemp[i] = sum[i] / 365;
@@ -128,7 +129,7 @@ int main() {
     maxwarmtemp[0][0] = warmestday[1][0];
     maxcoldtemp[0][0] =  coldestday[1][0];
     //Find the warmest lake, and see which are above/below avg temp
-    printf("The average temperature of all lakes is %.2lf in 2019, and %2.lf in 2018\n", totalavgtemp, totalavgtemp2018);
+    printf(" The average temperature of all lakes is %.2lf in 2019, and %2.lf in 2018\n\n", totalavgtemp, totalavgtemp2018);
     for (int i = 0; i < 6; i++) {
         if (avgtemp[i] > totalavgtemp) {
             printf("Lake %s is above the average temperature of all the lakes \n", initials[i]);
@@ -142,8 +143,8 @@ int main() {
         if(minavg==avgtemp[i]){
             printf("The coldest lake is lake %s\n", initials[i]);
         }
-        printf("Warmest temperature for lake %s: %.2lf on day %.lf \n", initials[i], warmestday[1][i], warmestday[0][i]+1);
-        printf("Coldest temperature for lake %s: %.2lf on day %.lf \n", initials[i], coldestday[1][i], coldestday[0][i]+1);
+        printf("Warmest temperature for lake %s: %.2lf on ", initials[i], warmestday[1][i]); getDate(warmestday[0][i]+1);
+        printf("Coldest temperature for lake %s: %.2lf on ", initials[i], coldestday[1][i]); getDate(coldestday[0][i]+1);
 
         if(warmestday[1][i]>maxwarmtemp[0][0]){
             maxwarmtemp[0][0] = warmestday[1][i];
@@ -160,7 +161,7 @@ int main() {
         printf("\n");
     }
     int initial1 = maxwarmtemp[1][0];
-    printf("The warmest overall temperature is %.2lf at lake %s on day %.lf\n",maxwarmtemp[0][0], initials[initial1], maxwarmtemp[2][0]+1);
+    printf("The warmest overall temperature is %.2lf at lake %s on ",maxwarmtemp[0][0], initials[initial1]); getDate(maxwarmtemp[2][0]+1);
     printf("The coldest overall temperature is %.2lf on multiple days in multiple lakes \n",maxcoldtemp[0][0]);
 
     double summersum[6] = {0,0,0,0,0,0};
@@ -202,5 +203,4 @@ int main() {
         printf("Lake %s : %.2lf | %.2lf \n", initials[i], avgtemp2018[i], avgtemp[i]);
     }
     return 0;
-    }
-
+}
